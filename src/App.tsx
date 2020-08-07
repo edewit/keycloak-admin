@@ -1,14 +1,22 @@
 import React, { useContext } from 'react';
+import {
+  Page,
+  PageSection,
+  Button,
+  AlertVariant,
+} from '@patternfly/react-core';
 
 import { ClientList } from './clients/ClientList';
 import { DataLoader } from './components/data-loader/DataLoader';
 import { HttpClientContext } from './http-service/HttpClientContext';
 import { Client } from './clients/client-model';
-import { Page, PageSection } from '@patternfly/react-core';
 import { Header } from './PageHeader';
 import { PageNav } from './PageNav';
+import { AlertPanel } from './components/alert/AlertPanel';
+import { useAlerts } from './components/alert/Alerts';
 
 export const App = () => {
+  const [add, alerts, hide] = useAlerts();
   const httpClient = useContext(HttpClientContext);
 
   const loader = async () => {
@@ -19,9 +27,13 @@ export const App = () => {
   return (
     <Page header={<Header />} sidebar={<PageNav />}>
       <PageSection>
+        <AlertPanel alerts={alerts} onCloseAlert={hide} />
         <DataLoader loader={loader}>
           {(clients) => <ClientList clients={clients} />}
         </DataLoader>
+        <Button onClick={() => add('Crazy stuff happened', AlertVariant.info)}>
+          Click
+        </Button>
       </PageSection>
     </Page>
   );
